@@ -1,33 +1,46 @@
-# Coronavirus COVID-19 (2019-nCoV) Data Acquisition and Visualization
+# Coronavirus COVID-19 (2019-nCoV) Epidemic Datasets
 
 ![](https://www.r-pkg.org/badges/version/COVID19) ![](https://www.r-pkg.org/badges/last-release/COVID19) ![](https://cranlogs.r-pkg.org/badges/grand-total/COVID19) 
 
-Pre-processed, ready-to-use, tidy format datasets of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic. The latest data are downloaded in real-time, processed and merged with demographic indicators from several trusted sources. The package implements advanced data visualization across the space and time dimensions by means of animated mapping. Besides worldwide data, the package includes granular data for Italy, Switzerland and the Diamond Princess.
+The repository aims at unifying COVID-19 datasets across different sources in order to simplify the data acquisition process and the subsequent analysis. __You are welcome to join__ and contribute by extending the number of supporting data sources as a joint effort against COVID-19.
 
-| field          | description                                   |
-| -------------- | --------------------------------------------- |
-| id             | id in the form "country\|state\|city"         |
-| date           | date                                          |
-| country        | administrative area level 1                   |
-| state          | administrative area level 2                   |
-| city           | administrative area level 3                   |
-| lat            | latitude                                      |
-| lng            | longitude                                     |
-| deaths         | the number of deaths                          |
-| confirmed      | the number of cases                           |
-| tests          | the number of tests                           |
-| deaths_new     | daily increase in the number of deaths        |
-| confirmed_new  | daily increase in the number of cases         |
-| tests_new      | daily increase in the number of tests         |
-| pop            | total population                              |
-| pop_14         | population ages 0-14 (% of total population)  |
-| pop_15_64      | population ages 15-64 (% of total population) |
-| pop_65         | population ages 65+ (% of total population)   |
-| pop_age        | median age of population                      |
-| pop_density    | population density per km2                    |
-| pop_death_rate | population mortality rate                     |
+The data are available to the end-user via the [R package COVID19](https://cran.r-project.org/package=COVID19) or in csv format (see below or on [Kaggle](https://www.kaggle.com/eguidotti/coronavirus-covid19-2019ncov-epidemic-datasets/)).
 
-## Quickstart
+## About
+
+### Goal
+
+Provide the research community with a unified data hub by collecting worldwide fine-grained data merged with demographics, air pollution, and other exogenous variables helpful for a better understanding of COVID-19.
+
+### How 
+
+The data are collected with the [R package COVID19](https://cran.r-project.org/package=COVID19). For R users, the COVID19 package is the recommended way to interact with the dataset. For non R users, the data are provided in csv format and regularly updated (see below or on [Kaggle](https://www.kaggle.com/eguidotti/coronavirus-covid19-2019ncov-epidemic-datasets/)).
+
+### Join the mission
+
+Whether or not you are an R user... take part in the data collection! Your contribution will be gratefully acknowledged. 
+
+#### R users 
+
+Find _real-time_ data sources and write R function(s) to import the data.
+
+1. Find data sources for real-time data such as number of cases, deaths, tests, hospitalized and new variables of this kind. See the data coverage table below to avoid working on something that is already available.
+2. Write an R function to import the data, just like [this](https://github.com/emanuele-guidotti/COVID19/blob/master/R/openZH.R).
+3. Submit your function to this repository by creating a [pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) 
+
+#### non-R users
+
+Find _historical_ data sources and put them into csv files.
+
+1. Find data sources for historical data such as demographics, population density, age, air quality and new variables of this kind. See the data coverage table below to avoid working on something that is already available.
+2. Create or improve a csv file, just like [this](https://github.com/emanuele-guidotti/COVID19/tree/master/inst/extdata/db).
+3. Submit your csv file to this repository by creating a [pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) 
+
+## R Package COVID19
+
+Simple, yet effective R package to acquire tidy format datasets of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic. The data are downloaded in real-time, cleaned and matched with exogenous variables.
+
+### Quickstart
 
 ```R
 # Install COVID19
@@ -36,45 +49,110 @@ install.packages("COVID19")
 # Load COVID19
 require("COVID19")
 ```
-## Data Acquisition
+### Data Acquisition
 
 ```R
-# Diamond Princess
+# Diamond Princess 
 d1 <- diamond()
 
-# Global data
-w1 <- world("country")       # by country
-w2 <- world("state")         # by state
+# World
+w1 <- world("country")       # data by country
+w2 <- world("state")         # data by state
 
-# Swiss data
-s1 <- switzerland("country") # by country
-s2 <- switzerland("state")   # by canton
+# US 
+u1 <- us("country")          # data by country
+u1 <- us("state")            # data by state
 
-# Italian data
-i1 <- italy("country")       # by country 
-i2 <- italy("state")         # by region 
-i3 <- italy("city")          # by city
+# Italy
+i1 <- italy("country")       # data by country 
+i2 <- italy("state")         # data by region 
+i3 <- italy("city")          # data by city
+
+# Switzerland 
+s1 <- switzerland("country") # data by country
+s2 <- switzerland("state")   # data by canton
+
+# Liechtenstein 
+l1 <- liechtenstein()        # data by country
 ```
 
-## Data Visualization
+## Data Hub (csv)
 
-```R
-geomap(w2, 
-  map = "world", 
-  value = "confirmed_new",
-  legend.title = "Daily Cases",
-  caption = "Data source: JHU CSSE",
-  nframes = 30+(2*length(unique(w2$date))),
-  end_pause = 30)
-```
+Daily updated datasets of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic in csv format. The following table shows the data coverage for each variable in each file. 
 
-![](https://storage.guidotti.dev/coronavirus/world/confirmed-new.gif)
+|                                                              | deaths                                                       | confirmed                                                    | tests                                                        | pop                                                          | pop_14                                                       | pop_15_64                                                    | pop_65                                                       | pop_age                                                      | pop_density                                                  | pop_death_rate                                               |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                                                              | number of COVID19 deaths                                     | number of COVID19 confirmed cases                            | number of COVID19 tests                                      | total population                                             | population ages 0-14 (% of total population)*                | population ages 15-64 (% of total population)**              | population ages 65+ (% of total population)                  | median age of population                                     | population density per km<sup>2</sup>                        | population mortality rate                                    |
+| **World**                                                    |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| [World: country level](https://storage.guidotti.dev/covid19/data/world-1.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/world-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/world-1.svg) |
+| [World: state level](https://storage.guidotti.dev/covid19/data/world-2.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/world-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/world-2.svg) |
+| **US**                                                       |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| [US: country level](https://storage.guidotti.dev/covid19/data/us-1.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/us-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/us-1.svg) |
+| [US: state level](https://storage.guidotti.dev/covid19/data/us-2.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/us-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/us-2.svg) |
+| **Italy**                                                    |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| [Italy: country level](https://storage.guidotti.dev/covid19/data/italy-1.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/italy-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/italy-1.svg) |
+| [Italy: state level](https://storage.guidotti.dev/covid19/data/italy-2.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/italy-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/italy-2.svg) |
+| [Italy: city level](https://storage.guidotti.dev/covid19/data/italy-3.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/italy-3.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/italy-3.svg) |
+| **Switzerland**                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| [Switzerland: country level](https://storage.guidotti.dev/covid19/data/switzerland-1.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/switzerland-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/switzerland-1.svg) |
+| [Switzerland: state level](https://storage.guidotti.dev/covid19/data/switzerland-2.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/switzerland-2.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/switzerland-2.svg) |
+| **Liechtenstein**                                            |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| [Liechtenstein: country level](https://storage.guidotti.dev/covid19/data/liechtenstein-1.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/liechtenstein-1.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/liechtenstein-1.svg) |
+| **Diamond Princess**                                         |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| [Diamond Princess](https://storage.guidotti.dev/covid19/data/diamond.csv) | ![](https://storage.guidotti.dev/covid19/coverage/deaths/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/confirmed/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/tests/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_14/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_15_64/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_65/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_age/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_density/diamond.svg) | ![](https://storage.guidotti.dev/covid19/coverage/pop_death_rate/diamond.svg) |
+
+_* Switzerland: ages 0-19_
+
+_** Switzerland: ages 20-64_
 
 ## Data Sources
 
-|                      | COVID-19                                                     | Demographics                                                 |
-| -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| **World**            | [Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)](https://github.com/CSSEGISandData/COVID-19) | [World Bank Open Data](https://data.worldbank.org/), [World Factbook by CIA](https://www.cia.gov/library/publications/resources/the-world-factbook/fields/343rank.html). |
-| **Italy**            | [Ministero della Salute, Dipartimento della Protezione Civile](https://github.com/pcm-dpc/COVID-19) | [Istituto Nazionale di Statistica](https://www.istat.it/en/population-and-households?data-and-indicators) |
-| **Switzerland**      | [Repository collecting the data published on the cantonal websites](https://github.com/daenuprobst/covid19-cases-switzerland) | [Swiss Federal Statistical Office](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) |
-| **Diamond Princess** | [Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)](https://github.com/CSSEGISandData/COVID-19), [Wikipedia](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_on_cruise_ships) | [Wikipedia](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_on_cruise_ships) |
+The following sources are gratefully acknowledged for making the data available to the public.
+
+|                      | deaths                                                       | confirmed                                                    | tests                                                        | pop                                                          | pop_14                                                       | pop_15_64                                                    | pop_65                                                       | pop_age                                                      | pop_density                                                  | pop_death_rate                                               |
+| -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+|                      | number of COVID19 deaths                                     | number of COVID19 confirmed cases                            | number of COVID19 tests                                      | total population                                             | population ages 0-14 (% of total population)*                | population ages 15-64 (% of total population)**              | population ages 65+ (% of total population)                  | median age of population                                     | population density per km<sup>2</sup>                        | population mortality rate                                    |
+| **World**            | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19) | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19) | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19) | [World Bank Open Data (2018)](https://data.worldbank.org/)   | [World Bank Open Data (2018)](https://data.worldbank.org/)   | [World Bank Open Data (2018)](https://data.worldbank.org/)   | [World Bank Open Data (2018)](https://data.worldbank.org/)   | [World Factbook by CIA (2018)](https://www.cia.gov/library/publications/resources/the-world-factbook/fields/343rank.html) | [World Bank Open Data (2018)](https://data.worldbank.org/)   | [World Bank Open Data (2018)](https://data.worldbank.org/)   |
+| **US**               | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19) | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19) | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19) | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19) |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| **Italy**            | [Ministero della Salute](https://github.com/pcm-dpc/COVID-19) | [Ministero della Salute](https://github.com/pcm-dpc/COVID-19) | [Ministero della Salute](https://github.com/pcm-dpc/COVID-19) | [Istituto Nazionale di Statistica (2018)](https://www.istat.it/en/population-and-households?data-and-indicators) | [Istituto Nazionale di Statistica (2018)](https://www.istat.it/en/population-and-households?data-and-indicators) | [Istituto Nazionale di Statistica (2018)](https://www.istat.it/en/population-and-households?data-and-indicators) | [Istituto Nazionale di Statistica (2018)](https://www.istat.it/en/population-and-households?data-and-indicators) | [Istituto Nazionale di Statistica (2018)](https://www.istat.it/en/population-and-households?data-and-indicators) | [Istituto Nazionale di Statistica (2018)](https://www.istat.it/en/population-and-households?data-and-indicators) | [Istituto Nazionale di Statistica (2018)](https://www.istat.it/en/population-and-households?data-and-indicators) |
+| **Switzerland**      | [Open Government Data](https://github.com/openZH/covid_19) | [Open Government Data](https://github.com/openZH/covid_19) | [Open Government Data](https://github.com/openZH/covid_19) | [Swiss Federal Statistical Office (2018)](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) | [Swiss Federal Statistical Office (2018)](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) | [Swiss Federal Statistical Office (2018)](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) | [Swiss Federal Statistical Office (2018)](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) | [Swiss Federal Statistical Office (2018)](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) | [Swiss Federal Statistical Office (2018)](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) | [Swiss Federal Statistical Office (2018)](https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html) |
+| **Liechtenstein**    | [Open Government Data](https://github.com/openZH/covid_19) | [Open Government Data](https://github.com/openZH/covid_19) | [Open Government Data](https://github.com/openZH/covid_19) |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+| **Diamond Princess** | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19), [Wikipedia](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_on_cruise_ships) | [JHU CSSE](https://github.com/CSSEGISandData/COVID-19), [Wikipedia](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_on_cruise_ships) | [Wikipedia](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_on_cruise_ships) | [Wikipedia](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_on_cruise_ships) |                                                              |                                                              |                                                              |                                                              |                                                              |                                                              |
+
+_* Switzerland: ages 0-19_
+
+_** Switzerland: ages 20-64_
+
+## Acknowledgements
+
+The following people have contributed to the data collection as a joint effort against COVID-19.
+
+|                                                              | deaths                              | confirmed                           | tests                               | pop                                 | pop_14                                        | pop_15_64                                       | pop_65                                      | pop_age                             | pop_density                           | pop_death_rate                      |
+| ------------------------------------------------------------ | ----------------------------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- | --------------------------------------------- | ----------------------------------------------- | ------------------------------------------- | ----------------------------------- | ------------------------------------- | ----------------------------------- |
+|                                                              | number of COVID19 deaths            | number of COVID19 confirmed cases   | number of COVID19 tests             | total population                    | population ages 0-14 (% of total population)* | population ages 15-64 (% of total population)** | population ages 65+ (% of total population) | median age of population            | population density per km<sup>2</sup> | population mortality rate           |
+| **World**                                                    |                                     |                                     |                                     |                                     |                                               |                                                 |                                             |                                     |                                       |                                     |
+| [World: country level](https://storage.guidotti.dev/covid19/data/world-1.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)           | [E.Guidotti](https://guidotti.dev/)             | [E.Guidotti](https://guidotti.dev/)         | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)   | [E.Guidotti](https://guidotti.dev/) |
+| [World: state level](https://storage.guidotti.dev/covid19/data/world-2.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)           | [E.Guidotti](https://guidotti.dev/)             | [E.Guidotti](https://guidotti.dev/)         | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)   | [E.Guidotti](https://guidotti.dev/) |
+| **US**                                                       |                                     |                                     |                                     |                                     |                                               |                                                 |                                             |                                     |                                       |                                     |
+| [US: country level](https://storage.guidotti.dev/covid19/data/us-1.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) |                                               |                                                 |                                             |                                     |                                       |                                     |
+| [US: state level](https://storage.guidotti.dev/covid19/data/us-2.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) |                                               |                                                 |                                             |                                     |                                       |                                     |
+| **Italy**                                                    |                                     |                                     |                                     |                                     |                                               |                                                 |                                             |                                     |                                       |                                     |
+| [Italy: country level](https://storage.guidotti.dev/covid19/data/italy-1.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)           | [E.Guidotti](https://guidotti.dev/)             | [E.Guidotti](https://guidotti.dev/)         | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)   | [E.Guidotti](https://guidotti.dev/) |
+| [Italy: state level](https://storage.guidotti.dev/covid19/data/italy-2.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)           | [E.Guidotti](https://guidotti.dev/)             | [E.Guidotti](https://guidotti.dev/)         | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)   | [E.Guidotti](https://guidotti.dev/) |
+| [Italy: city level](https://storage.guidotti.dev/covid19/data/italy-3.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)           | [E.Guidotti](https://guidotti.dev/)             | [E.Guidotti](https://guidotti.dev/)         | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)   | [E.Guidotti](https://guidotti.dev/) |
+| **Switzerland**                                              |                                     |                                     |                                     |                                     |                                               |                                                 |                                             |                                     |                                       |                                     |
+| [Switzerland: country level](https://storage.guidotti.dev/covid19/data/switzerland-1.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)           | [E.Guidotti](https://guidotti.dev/)             | [E.Guidotti](https://guidotti.dev/)         | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)   | [E.Guidotti](https://guidotti.dev/) |
+| [Switzerland: state level](https://storage.guidotti.dev/covid19/data/switzerland-2.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)           | [E.Guidotti](https://guidotti.dev/)             | [E.Guidotti](https://guidotti.dev/)         | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/)   | [E.Guidotti](https://guidotti.dev/) |
+| **Liechtenstein**                                            |                                     |                                     |                                     |                                     |                                               |                                                 |                                             |                                     |                                       |                                     |
+| [Liechtenstein: country level](https://storage.guidotti.dev/covid19/data/liechtenstein-1.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) |                                     |                                               |                                                 |                                             |                                     |                                       |                                     |
+| **Diamond Princess**                                         |                                     |                                     |                                     |                                     |                                               |                                                 |                                             |                                     |                                       |                                     |
+| [Diamond Princess](https://storage.guidotti.dev/covid19/data/diamond.csv) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) | [E.Guidotti](https://guidotti.dev/) |                                               |                                                 |                                             |                                     |                                       |                                     |
+
+_* Switzerland: ages 0-19_
+
+_** Switzerland: ages 20-64_
+
+## Use Cases
+
+- Monitoring the advancement of the COVID–19 contagion in the regions of Italy ([code](https://github.com/krzbar/COVID19))
+
