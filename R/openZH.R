@@ -1,35 +1,38 @@
-openZH <- function(){
+openZH <- function(cache, id = NULL){
 
-  # bindings
-  code <- NULL
-
-  # data source
+  # source
   repo <- "https://raw.githubusercontent.com/openZH/covid_19/master/"
+  url  <- "COVID19_Fallzahlen_CH_total_v2.csv"
 
   # download
-  url   <- "COVID19_Fallzahlen_CH_total.csv"
-  url   <- sprintf("%s/%s", repo, url)
-  data  <- utils::read.csv(url)
+  url <- sprintf("%s/%s", repo, url)
+  x   <- read.csv(url, cache = cache)
 
-  # dates
-  d <- as.Date(data$date, format = "%Y-%m-%d")
-  data$date <- d
+  # date
+  d <- as.Date(x$date, format = "%Y-%m-%d")
+  if(any(na <- is.na(d)))
+    d[na] <- as.Date(x$date[na], format = "%d.%m.%Y")
+  x$date <- d
 
   # formatting
-  data$code      <- data$abbreviation_canton_and_fl
-  data$confirmed <- data$ncumul_conf
-  data$tests     <- data$ncumul_tested
-  data$deaths    <- data$ncumul_deceased
-  data$recovered <- data$ncumul_released
-  data$hosp      <- data$ncumul_hosp   # current, not cumulative numbers: https://github.com/openZH/covid_19
-  data$hosp_icu  <- data$ncumul_ICU    # current, not cumulative numbers: https://github.com/openZH/covid_19
-  data$hosp_vent <- data$ncumul_vent   # current, not cumulative numbers: https://github.com/openZH/covid_19
+  x$code      <- x$abbreviation_canton_and_fl
+  x$confirmed <- x$ncumul_conf
+  x$tests     <- x$ncumul_tested
+  x$deaths    <- x$ncumul_deceased
+  x$recovered <- x$ncumul_released
+  x$hosp      <- x$current_hosp
+  x$icu       <- x$current_icu
+  x$vent      <- x$current_vent
 
-  # country
-  data <- data %>%
-    dplyr::mutate(country = ifelse(code=="FL", "Liechtenstein", "Switzerland"))
+  # filter
+  if(!is.null(id)){
+    if(id=="FL")
+      x <- x[x$code=="FL",,drop=FALSE]
+    if(id=="CH")
+      x <- x[x$code!="FL",,drop=FALSE]
+  }
 
   # return
-  return(data)
+  return(x)
 
 }

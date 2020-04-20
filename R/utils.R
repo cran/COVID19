@@ -9,7 +9,10 @@ NULL
 
     packageStartupMessage("The coronavirus situation is changing fast. Checking for updates...")
 
-    description <- readLines('https://raw.githubusercontent.com/emanuele-guidotti/COVID19/master/DESCRIPTION')
+    description <- try(readLines('https://raw.githubusercontent.com/covid19datahub/COVID19/master/DESCRIPTION'), silent = TRUE)
+    if(class(description)=="try-error")
+      return()
+      
     id <- which(startsWith(prefix = "Version:", x = description))
     v  <- as.package_version(gsub(pattern = "^Version:\\s*", replacement = "", x = description[id]))
 
@@ -34,86 +37,191 @@ NULL
 update <- function(){
 
   detach("package:COVID19", unload=TRUE)
-  x <- try(devtools::install_github('emanuele-guidotti/COVID19', quiet = FALSE, upgrade = FALSE), silent = TRUE)
+  x <- try(remotes::install_github('covid19datahub/COVID19', quiet = FALSE, upgrade = FALSE), silent = TRUE)
   library(COVID19)
 
 }
 
 
 
-db <- function(id){
-  utils::read.csv(system.file("extdata", "db", paste0(id,".csv"), package = "COVID19"))
+db <- function(id, type = NULL){
+
+  if(!is.null(type)){
+    map <- c('country' = 1, 'state' = 2, 'city' = 3)
+    id  <- paste0(id,"-",map[type])
+  }
+
+  utils::read.csv(system.file("extdata", "db", paste0(id,".csv"), package = "COVID19"), na.strings = "", stringsAsFactors = FALSE, encoding = "UTF-8")
+
 }
 
 
 
-fill <- function(x){
 
-  # subset
-  x <- x[!is.na(x$date),]
+fix <- function(id){
 
-  # full grid
-  date <- seq(min(x$date), max(x$date), by = 1)
-  id   <- unique(x$id)
-  grid <- expand.grid(id = id, date = date)
+  x <- try(suppressWarnings(utils::read.csv(system.file("extdata", "fix", paste0(id,".csv"), package = "COVID19"), na.strings = "", stringsAsFactors = FALSE)), silent = TRUE)
+  if(class(x)=="try-error")
+    return(NULL)
 
-  # fill
-  x <- suppressWarnings(dplyr::bind_rows(x, grid))
-  x <- x[!duplicated(x[,c("id","date")]),]
-
-  # return
   return(x)
 
 }
 
 
 
-covid19 <- function(x, raw = FALSE){
+csv <- function(ISO = NULL, x = NULL, save = FALSE){
 
-  # bindings
-  id <- date <- country <- state <- city <- lat <- lng <- confirmed <- tests <- deaths <- NULL
+  cn <- vars("slow")
+  cn <- cn[!(cn %in% c('iso_alpha_3','iso_alpha_2','iso_numeric','country'))]
 
-  # create columns if missing
-  col <- c('id','date','country','state','city','lat','lng','deaths','confirmed','tests','deaths_new','confirmed_new','tests_new','pop','pop_14','pop_15_64','pop_65','pop_age','pop_density','pop_death_rate')
-  x[,col[!(col %in% colnames(x))]] <- NA
-  x$id <- paste(x$country, x$state, x$city, sep = "|")
+  if(!is.null(x)){
+    x[,cn[!(cn %in% colnames(x))]] <- NA
+    x <- x[,cn]
+    x <- x[!duplicated(x),]
+  }
 
-  # subset
-  x <- x[,col]
+  if(!is.null(ISO))
+    x <- dplyr::bind_rows(db(ISO), x)
 
-  # fill
-  x <- fill(x)
+  x <- x[!duplicated(x),]
+  x[,cn[!(cn %in% colnames(x))]] <- NA
+  x <- dplyr::arrange(x, -rowSums(is.na(x)), x$state, x$city)
 
-  # clean
-  x <- x %>%
-    dplyr::arrange(date) %>%
-    dplyr::group_by(id)  %>%
-    tidyr::fill(.direction = "downup",
-                'country', 'state', 'city',
-                'lat', 'lng',
-                'pop','pop_14','pop_15_64','pop_65',
-                'pop_age','pop_density',
-                'pop_death_rate')
+  if(save & !is.null(ISO))
+    utils::write.csv(x, paste0(ISO,".csv"), row.names = FALSE, na = "", fileEncoding = "UTF-8")
 
-  if(!raw)
-    x <- x %>%
-      tidyr::fill(.direction = "down",
-                  'confirmed', 'tests', 'deaths') %>%
-      tidyr::replace_na(list(confirmed = 0,
-                             tests     = 0,
-                             deaths    = 0))
-
-  x <- x %>%
-    dplyr::mutate(confirmed_new = c(confirmed[1], pmax(0,diff(confirmed))),
-                  tests_new     = c(tests[1],     pmax(0,diff(tests))),
-                  deaths_new    = c(deaths[1],    pmax(0,diff(deaths))))
-
-  # convert
-  x$date <- as.Date(x$date)
-  for(i in c('id','country','state','city'))
-    x[[i]] <- as.character(x[[i]])
-
-  # return
   return(x)
 
 }
+
+
+
+mapvalues <- function(x, map){
+
+  from <- names(map)
+  to   <- map
+
+  for(i in 1:length(map)){
+
+    idx <- which(x==from[i])
+    if(length(idx)>0)
+      x[idx] <- to[i]
+
+  }
+
+  return(x)
+
+}
+
+
+
+drop <- function(x){
+
+  idx <- which(endsWith(colnames(x), '.drop'))
+  if(length(idx)>0)
+    x <- x[,-idx]
+
+  return(x)
+
+}
+
+
+cachecall <- function(fun, ...){
+
+  args  <- list(...)
+  cache <- ifelse(is.null(args$cache), TRUE, args$cache)
+  key   <- make.names(sprintf("%s_%s",paste(deparse(fun), collapse = ''),paste(names(args),args,sep = ".",collapse = "..")))
+
+  if(cache & exists(key, envir = cachedata))
+    return(get(key, envir = cachedata))
+  else
+    x <- try(do.call(fun, args = args), silent = TRUE)
+
+  if("try-error" %in% class(x))
+    x <- NULL
+
+  if(cache)
+    assign(key, x, envir = cachedata)
+
+  return(x)
+
+}
+
+
+read.csv <- function(file, cache, na.strings = "", stringsAsFactors = FALSE, encoding = "UTF-8", ...){
+
+  if(cache)
+    x <- cachecall(utils::read.csv, file = file, na.strings = na.strings, stringsAsFactors = stringsAsFactors, encoding = encoding, ...)
+  else
+    x <- utils::read.csv(file = file, na.strings = na.strings, stringsAsFactors = stringsAsFactors, encoding = encoding, ...)
+
+  return(x)
+
+}
+
+
+id <- function(..., esc = TRUE){
+
+  args <- list(...)
+
+  x <- NULL
+  for(i in args){
+
+    i[is.na(i)] <- ""
+
+    if(esc)
+      i <- gsub(",", "", i)
+
+    if(is.null(x))
+      x <- i
+    else
+      x <- gsub(", $", "", paste(x, i, sep = ', '))
+
+  }
+
+  return(x)
+
+}
+
+
+test <- function(ISO = NULL, level, end, raw){
+
+  x <- covid19(ISO = ISO, level = level, end = end, raw = raw)
+  y <- covid19(ISO = ISO, level = level, end = end, raw = raw, vintage = TRUE)
+
+  id <- intersect(x$id, y$id)
+  dd <- intersect(x$date, y$date)
+  cn <- intersect(colnames(x), colnames(y))
+
+  x <- x[which((x$id %in% id) & (x$date %in% dd)), cn]
+  y <- y[which((y$id %in% id) & (y$date %in% dd)), cn]
+
+  return(mean(x==y, na.rm = TRUE))
+
+}
+
+
+vars <- function(type = "all"){
+
+  fast <- c('deaths','confirmed','tests','recovered',
+            'hosp','icu','vent',
+            'driving', 'walking', 'transit')
+
+  slow <- c('country','state','city',
+            'lat','lng',
+            'pop','pop_14','pop_15_64','pop_65',
+            'pop_age','pop_density','pop_death_rate')
+
+  all  <- unique(c('id','date', fast, slow))
+
+  if(type=="slow")
+    return(slow)
+
+  if(type=="fast")
+    return(fast)
+
+  return(all)
+
+}
+
