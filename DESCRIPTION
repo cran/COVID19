@@ -1,26 +1,27 @@
 Package: COVID19
 Type: Package
-Title: Coronavirus COVID-19 (2019-nCoV) Epidemic Datasets
-Version: 1.0.0
+Title: R Interface to COVID-19 Data Hub
+Version: 2.0.0
 Authors@R: c(
     person(given = "Emanuele", family = "Guidotti", email = "emanuele.guidotti@unine.ch", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8961-6623")),
     person(given = "David", family = "Ardia", role = c("ctb"), comment = c(ORCID = "0000-0003-2823-782X"))
   )
-Description: Unified tidy format datasets of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic across several sources. The data are downloaded in real-time, cleaned and matched with exogenous variables. Vintage databases are also supported.
+Description: Unified datasets for a better understanding of COVID-19. 
+  The package collects COVID-19 data across governmental sources, 
+  includes policy measures from 'Oxford COVID-19 Government Response Tracker' <https://www.bsg.ox.ac.uk/covidtracker>, 
+  and extends the dataset via an interface to 'World Bank Open Data' <https://data.worldbank.org/>, 'Google Mobility Reports' <https://www.google.com/covid19/mobility/>, 'Apple Mobility Reports' <https://www.apple.com/covid19/mobility>.
 License: GPL-3
 URL: https://covid19datahub.io
-BugReports: https://github.com/covid19datahub/COVID19/issues
+BugReports: https://github.com/covid19datahub/R/issues
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 2.10)
-Imports: remotes, utils, dplyr, tidyr
-RoxygenNote: 7.0.2
-Suggests: knitr, rmarkdown
-VignetteBuilder: knitr
+Imports: utils, dplyr, tidyr (>= 1.0.0), wbstats
+RoxygenNote: 7.1.0
 NeedsCompilation: no
-Packaged: 2020-04-20 09:48:33 UTC; Emanuele
+Packaged: 2020-05-18 09:24:18 UTC; Emanuele
 Author: Emanuele Guidotti [aut, cre] (<https://orcid.org/0000-0002-8961-6623>),
   David Ardia [ctb] (<https://orcid.org/0000-0003-2823-782X>)
 Maintainer: Emanuele Guidotti <emanuele.guidotti@unine.ch>
 Repository: CRAN
-Date/Publication: 2020-04-20 10:10:02 UTC
+Date/Publication: 2020-05-18 09:50:11 UTC

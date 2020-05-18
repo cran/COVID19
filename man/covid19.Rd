@@ -2,80 +2,115 @@
 % Please edit documentation in R/covid19.R
 \name{covid19}
 \alias{covid19}
-\title{Coronavirus COVID-19 (2019-nCoV) Epidemic Datasets}
+\title{COVID-19 Data Hub}
 \source{
-\href{https://github.com/covid19datahub/COVID19#data-sources}{Data sources}
+\url{https://covid19datahub.io}
 }
 \usage{
 covid19(
-  ISO = NULL,
+  country = NULL,
   level = 1,
-  start = "2019-01-01",
+  start = "2010-01-01",
   end = Sys.Date(),
-  vintage = FALSE,
   raw = FALSE,
-  cache = TRUE
+  vintage = FALSE,
+  verbose = TRUE,
+  cache = TRUE,
+  wb = NULL,
+  gmr = NULL,
+  amr = NULL
 )
 }
 \arguments{
-\item{ISO}{vector of ISO codes to retrieve (alpha-2, alpha-3 or numeric). Each country is identified by one of its \href{https://github.com/covid19datahub/COVID19/blob/master/inst/extdata/db/ISO.csv}{ISO codes}}
+\item{country}{vector of country names or \href{https://github.com/covid19datahub/COVID19/blob/master/inst/extdata/db/ISO.csv}{ISO codes} (alpha-2, alpha-3 or numeric).}
 
-\item{level}{integer. Granularity level. 1: country-level data. 2: state-level data. 3: city-level data.}
+\item{level}{integer. Granularity level. 1: country-level data. 2: state-level data. 3: lower-level data.}
 
 \item{start}{the start date of the period of interest.}
 
 \item{end}{the end date of the period of interest.}
 
-\item{vintage}{logical. Retrieve the snapshot of the dataset at the \code{end} date instead of using the latest version? Default \code{FALSE}.}
-
 \item{raw}{logical. Skip data cleaning? Default \code{FALSE}. See details.}
 
+\item{vintage}{logical. Retrieve the snapshot of the dataset that was generated at the \code{end} date instead of using the latest version. Default \code{FALSE}.}
+
+\item{verbose}{logical. Print data sources? Default \code{TRUE}.}
+
 \item{cache}{logical. Memory caching? Significantly improves performance on successive calls. Default \code{TRUE}.}
+
+\item{wb}{character vector of \href{https://data.worldbank.org}{World Bank} indicator codes. See details.}
+
+\item{gmr}{url to the \href{https://www.google.com/covid19/mobility/}{Google Mobility Report} dataset. See details.}
+
+\item{amr}{url to the \href{https://www.apple.com/covid19/mobility}{Apple Mobility Report} dataset. See details.}
 }
 \value{
-\href{https://github.com/covid19datahub/COVID19#dataset}{Grouped \code{tibble} (\code{data.frame})}
+Grouped \code{tibble} (\code{data.frame}). See the \href{https://covid19datahub.io/articles/doc/data.html}{dataset description}
 }
 \description{
-Unified tidy format datasets of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic across several sources.
-The data are downloaded in real-time, cleaned and matched with exogenous variables.
-Vintage databases are also supported.
+Unified dataset for a better understanding of COVID-19. Collects COVID-19 data across governmental sources. 
+Includes policy measures from \href{https://www.bsg.ox.ac.uk/covidtracker}{Oxford COVID-19 Government Response Tracker}. 
+Extends the dataset via an interface to 
+\href{https://data.worldbank.org/}{World Bank Open Data}, 
+\href{https://www.google.com/covid19/mobility/}{Google Mobility Reports}, 
+\href{https://www.apple.com/covid19/mobility}{Apple Mobility Reports}.
 }
 \details{
-\href{https://github.com/covid19datahub/COVID19}{Collection methodology and details}
+If \code{raw=TRUE}, the raw data are cleaned by filling missing dates with \code{NA} values. 
+This ensures that all locations share the same grid of dates and no single day is skipped. 
+Then, \code{NA} values are replaced with the previous non-\code{NA} value or \code{0}.
+
+The dataset can be extended with \href{https://data.worldbank.org}{World Bank Open Data} via the argument \code{wb}, a character vector of indicator codes.
+The codes can be found by inspecting the corresponding URL. For example, the code of the GDP indicator available at \url{https://data.worldbank.org/indicator/NY.GDP.MKTP.CD} is \code{NY.GDP.MKTP.CD}.
+The latest data available between the \code{start} and \code{end} date are downloaded.
+
+The dataset can be extended with \href{https://www.google.com/covid19/mobility/}{Google Mobility Reports} via the argument \code{gmr}, the url to the Google CSV file.
+At the time of writing, the CSV is available at \href{https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv}{this link}. 
+
+The dataset can be extended with \href{https://www.apple.com/covid19/mobility}{Apple Mobility Reports} via the argument \code{amr}, the url to the Apple CSV file.
+At the time of writing, the CSV is available at \href{https://covid19-static.cdn-apple.com/covid19-mobility-data/2008HotfixDev28/v2/en-us/applemobilitytrends-2020-05-15.csv}{this link}.
+
+Data sources are stored in the \code{src} attribute. See examples.
 }
 \note{
-We have invested a lot of time and effort in creating \href{https://covid19datahub.io}{COVID-19 Data Hub}. We expect you to agree to the following rules when using it:
+We have invested a lot of time and effort in creating \href{https://covid19datahub.io}{COVID-19 Data Hub}, please:
 
 \itemize{
-\item cite Guidotti and Ardia (2020) in working papers and published papers that use \href{https://covid19datahub.io}{COVID-19 Data Hub}
-\item place the URL \url{https://covid19datahub.io} in a footnote to help others find \href{https://covid19datahub.io}{COVID-19 Data Hub}
-\item you assume full risk for the use of \href{https://covid19datahub.io}{COVID-19 Data Hub}
+\item cite \href{https://doi.org/10.13140/RG.2.2.11649.81763}{Guidotti and Ardia (2020)} in working papers and published papers that use it.
+\item place the URL \url{https://covid19datahub.io} in a footnote to help others find \href{https://covid19datahub.io}{COVID-19 Data Hub}.
+\item you assume full risk for the use of \href{https://covid19datahub.io}{COVID-19 Data Hub}. 
+We try our best to guarantee the data quality and consistency and the continuous filling of the Data Hub. 
+However, it is free software and comes with ABSOLUTELY NO WARRANTY. 
+Reliance on \href{https://covid19datahub.io}{COVID-19 Data Hub} for medical guidance or use of \href{https://covid19datahub.io}{COVID-19 Data Hub} in commerce is strictly prohibited.
 }
-
-The \href{https://covid19datahub.io}{COVID-19 Data Hub} (R package COVID19, GitHub repo, cloud storage), and its contents herein, including all data, mapping, and analyses, are provided to the public strictly for educational and academic research purposes. The \href{https://covid19datahub.io}{COVID-19 Data Hub} relies upon publicly available data from multiple sources. We are currently in the process of reconciling the providers with proper reference to their open-source data. Please inform us if you see any issues with the data licenses.
-
-We try our best to guarantee the data quality and consistency and the continuous filling of the \href{https://covid19datahub.io}{COVID-19 Data Hub}. However, it is free software and comes with ABSOLUTELY NO WARRANTY. We hereby disclaim any and all representations and warranties with respect to the \href{https://covid19datahub.io}{COVID-19 Data Hub}, including accuracy, fitness for use, and merchantability. Reliance on the \href{https://covid19datahub.io}{COVID-19 Data Hub} for medical guidance or use of the \href{https://covid19datahub.io}{COVID-19 Data Hub} in commerce is strictly prohibited.
 }
 \examples{
 \dontrun{
 
 # Worldwide data by country
-covid19()
+x <- covid19()
 
 # Worldwide data by state
-covid19(level = 2)
+x <- covid19(level = 2)
 
-# US data by state
-covid19("USA", level = 2)
+# Specific country data by city
+x <- covid19(c("Italy","US"), level = 3)
 
-# Swiss data by state (cantons)
-covid19("CHE", level = 2)
+# Merge with World Bank data
+wb <- c("gdp" = "NY.GDP.MKTP.CD", "hosp_beds" = "SH.MED.BEDS.ZS")
+x  <- covid19(wb = wb)
 
-# Italian data by state (regions)
-covid19("ITA", level = 2)
+# Merge with Google Mobility Reports
+gmr <- "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv"
+x   <- covid19(gmr = gmr)
 
-# Italian and US data by city
-covid19(c("ITA","USA"), level = 3)
+# Merge with Apple Mobility Reports
+amr <- "https://covid19-static.cdn-apple.com/covid19-mobility-data/"
+amr <- paste0(amr, "2008HotfixDev28/v2/en-us/applemobilitytrends-2020-05-15.csv")
+x   <- covid19(amr = amr)
+
+# Data sources
+s <- attr(x, "src")
 }
 
 }
