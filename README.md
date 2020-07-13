@@ -2,13 +2,13 @@
 
 # R Interface to COVID-19 Data Hub
 
-![](https://www.r-pkg.org/badges/version/COVID19) ![](https://www.r-pkg.org/badges/last-release/COVID19) ![](https://cranlogs.r-pkg.org/badges/grand-total/COVID19) [![](https://img.shields.io/badge/doi-10.13140/RG.2.2.11649.81763-orange.svg)](https://doi.org/10.13140/RG.2.2.11649.81763)
+![](https://www.r-pkg.org/badges/version/COVID19) ![](https://cranlogs.r-pkg.org/badges/last-month/COVID19) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02376/status.svg)](https://doi.org/10.21105/joss.02376)
 
 ## Quickstart
 
 ```R
 # install the package
-remotes::install_github("covid19datahub/R")
+install.packages("COVID19")
 
 # load the package
 library("COVID19")
@@ -34,7 +34,6 @@ x <- covid19(c("Italy","US"), level = 3)
 The dataset can be extended with [World Bank Open Data](https://data.worldbank.org/) via the argument `wb`, a character vector of indicator codes. The codes can be found by inspecting the corresponding URL. For example, the code of the GDP indicator available at https://data.worldbank.org/indicator/NY.GDP.MKTP.CD is `NY.GDP.MKTP.CD`. 
 
 ```R
-# Merge with World Bank data
 wb <- c("gdp" = "NY.GDP.MKTP.CD", "hosp_beds" = "SH.MED.BEDS.ZS")
 x  <- covid19(wb = wb)
 ```
@@ -54,16 +53,16 @@ The dataset can be extended with [Apple Mobility Reports](https://www.apple.com/
 
 ```R
 amr <- "https://covid19-static.cdn-apple.com/covid19-mobility-data/"
-amr <- paste0(amr, "2008HotfixDev28/v2/en-us/applemobilitytrends-2020-05-15.csv")
+amr <- paste0(amr, "2012HotfixDev8/v3/en-us/applemobilitytrends-2020-07-09.csv")
 x   <- covid19(amr = amr)
 ```
 
-## List the data sources
+## Data sources
 
 Data sources are stored in the `src` attribute.
 
 ```R
-# Data sources
-s <- attr(x, "src")
+s <- covid19cite(x)
+View(S)
 ```
 
