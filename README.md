@@ -49,11 +49,11 @@ x   <- covid19(gmr = gmr)
 
 ## Merge with Apple Mobility Reports
 
-The dataset can be extended with [Apple Mobility Reports](https://www.apple.com/covid19/mobility) via the argument `amr`, the url to the Apple CSV file. At the time of writing, the CSV is available at:
+The dataset can be extended with [Apple Mobility Reports](https://covid19.apple.com/mobility) via the argument `amr`, the url to the Apple CSV file. At the time of writing, the CSV is available at:
 
 ```R
 amr <- "https://covid19-static.cdn-apple.com/covid19-mobility-data/"
-amr <- paste0(amr, "2012HotfixDev8/v3/en-us/applemobilitytrends-2020-07-09.csv")
+amr <- paste0(amr, "2015HotfixDev10/v3/en-us/applemobilitytrends-2020-08-24.csv")
 x   <- covid19(amr = amr)
 ```
 
@@ -63,6 +63,6 @@ Data sources are stored in the `src` attribute.
 
 ```R
 s <- covid19cite(x)
-View(S)
+View(s)
 ```
 
