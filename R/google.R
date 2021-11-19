@@ -1,38 +1,63 @@
-google <- function(x, level, url, cache){
+google <- function(x, level, url, dir, verbose){
   
-  # check
-  if(is.null(x$key_google_mobility)){
-    
-    if(level==1)
-      x$key_google_mobility <- x$iso_alpha_2
-    else
-      return(x)
-    
+  # sanitize url
+  if(is.logical(url)){
+    if(!url) return(x)
+    url <- "https://www.gstatic.com/covid19/mobility/Region_Mobility_Report_CSVs.zip"
   }
   
-  # download
-  g <- read.csv(url, cache = cache)
+  # backward compatibility: use names instead of place_id
+  backward <- any(nchar(x$key_google_mobility)!=27, na.rm = TRUE)
+  if(backward){
   
-  # date
+    if(is.null(x$key_google_mobility)){
+      idx <- which(x$administrative_area_level==1)
+      if(!length(idx)) return(x)
+      x$key_google_mobility[idx] <- x$iso_alpha_2[idx]
+    }
+    
+    if(length(idx <- which(x$administrative_area_level>1))){
+      x$key_google_mobility[idx] <- paste(x$iso_alpha_2[idx], x$key_google_mobility[idx], sep = ", ")
+      x$key_google_mobility[idx] <- gsub("(, (NA)?)+$", "", x$key_google_mobility[idx])    
+    }
+    
+  }
+
+  # download
+  path <- download(url, dir = dir, verbose = verbose, timestamp = TRUE)
+  
+  # files to read
+  pattern <- sprintf("\\_%s\\_", paste0(unique(x$iso_alpha_2), collapse = "|"))
+  files <- list.files(path, pattern = pattern, full.names = TRUE)
+  
+  # read
+  g <- data.table::rbindlist(fill = TRUE, lapply(files, function(file){
+    g <- data.table::fread(file, encoding = "UTF-8", na.strings = "", showProgress = verbose)
+    if(backward){
+      g$place_id <- paste(g$country_region_code, g$sub_region_1, g$sub_region_2, g$metro_area, sep = ", ")
+      g$place_id <- gsub("(, (NA)?)+$", "", g$place_id)
+    }
+    g[g$place_id %in% x$key_google_mobility & !is.na(g$place_id),]
+  }))
+  
+  # check
+  if(!nrow(g))
+    return(x)
+  
+  # convert date
   g$date <- as.Date(g$date)
   
-  # keys
-  g$key_google_mobility <- paste(g$country_region_code, g$sub_region_1, g$sub_region_2, sep = ", ")
-  if(level>1)
-    x$key_google_mobility <- paste(x$iso_alpha_2, x$key_google_mobility, sep = ", ")
+  # subset
+  g <- g[,c(
+    "place_id", "date",            
+    "retail_and_recreation_percent_change_from_baseline",
+    "grocery_and_pharmacy_percent_change_from_baseline", 
+    "parks_percent_change_from_baseline",    
+    "transit_stations_percent_change_from_baseline",     
+    "workplaces_percent_change_from_baseline",         
+    "residential_percent_change_from_baseline")]
   
-  # clean
-  g$key_google_mobility <- gsub("(, (NA)?)+$", "", g$key_google_mobility)
-  x$key_google_mobility <- gsub("(, (NA)?)+$", "", x$key_google_mobility)
-  
-  # merge
-  x <- merge(x, g, by = c("date","key_google_mobility"), all.x = TRUE)
-  
-  # drop 
-  rm <- c("country_region_code","country_region","sub_region_1","sub_region_2")
-  x  <- x[, setdiff(colnames(x), rm)]
-
   # return
-  return(x)
+  join(x, g, on = c("date" = "date", "key_google_mobility" = "place_id"))
   
 }
