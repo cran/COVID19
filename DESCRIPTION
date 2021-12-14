@@ -1,7 +1,7 @@
 Package: COVID19
 Type: Package
 Title: R Interface to COVID-19 Data Hub
-Version: 3.0.0
+Version: 3.0.1
 Authors@R: c(
     person(given = "Emanuele", family = "Guidotti", email = "emanuele.guidotti@unine.ch", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-8961-6623")),
     person(given = "David", family = "Ardia", role = c("ctb"), comment = c(ORCID = "0000-0003-2823-782X"))
@@ -19,9 +19,9 @@ Imports: tools, utils, R.utils, data.table
 Suggests: RSQLite, wbstats (>= 1.0.0)
 RoxygenNote: 7.1.2
 NeedsCompilation: no
-Packaged: 2021-11-18 20:06:07 UTC; Emanuele
+Packaged: 2021-12-14 16:35:16 UTC; Emanuele
 Author: Emanuele Guidotti [aut, cre] (<https://orcid.org/0000-0002-8961-6623>),
   David Ardia [ctb] (<https://orcid.org/0000-0003-2823-782X>)
 Maintainer: Emanuele Guidotti <emanuele.guidotti@unine.ch>
 Repository: CRAN
-Date/Publication: 2021-11-19 07:20:11 UTC
+Date/Publication: 2021-12-14 16:50:02 UTC
