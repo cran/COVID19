@@ -1,6 +1,10 @@
+# COVID19 3.0.2
+
+* Argument `wb` now accepts also a non-named vector of indicators.
+
 # COVID19 3.0.1
 
-* Added option to automatically retrieve the URL to the Apple mobility CSV file. Thanks to [@heinonmatti](https://github.com/covid19datahub/COVID19/issues/184)
+* Added option to automatically retrieve the URL to the Apple mobility CSV file. Thanks to [heinonmatti](https://github.com/covid19datahub/COVID19/issues/184)
 
 # COVID19 3.0.0
 
