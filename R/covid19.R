@@ -21,17 +21,14 @@
 #' For example, the code of the indicator "Hospital beds (per 1,000 people)" available at \url{https://data.worldbank.org/indicator/SH.MED.BEDS.ZS} is \code{SH.MED.BEDS.ZS}.
 #' The indicators are typically available at a yearly frequency. 
 #' This function returns the latest data available between the \code{start} and the \code{end} date.
-#' See the table at the bottom of \href{https://datatopics.worldbank.org/universal-health-coverage/coronavirus/}{this page} for suggested indicators.
 #'
 #' Mobility data by \href{https://www.google.com/covid19/mobility/}{Google Mobility Reports} can be added via the argument \code{gmr}.
 #' This is the link to the Google "CSV by geographic area" ZIP folder. 
 #' At the time of writing, the link is \url{https://www.gstatic.com/covid19/mobility/Region_Mobility_Report_CSVs.zip}.
 #' As the link has been stable since the beginning of the pandemic, the function accepts \code{gmr=TRUE} to automatically use this link.
 #' 
-#' Mobility data by \href{https://covid19.apple.com/mobility}{Apple Mobility Reports} can be added via the argument \code{amr}.
-#' This is the link to the Apple "All CSV data" file. This link is changing constantly. 
-#' Consider downloading the data file from the website first, and then set \code{amr="path/to/file.csv"}.
-#' If \code{amr=TRUE} is provided, the function tries to detect the latest URL from \href{https://covid19-static.cdn-apple.com/covid19-mobility-data/current/v3/index.json}{this endpoint}.
+#' As of April 14, 2022, Apple is no longer providing COVID-19 \href{https://covid19.apple.com/mobility}{mobility trends reports}.
+#' If you have downloaded the data file previously, you can still use it by setting \code{amr="path/to/file.csv"}.
 #'
 #' Refer to \href{https://covid19datahub.io/reference/index.html}{this webpage} for the details on the data sources, and 
 #' \href{https://covid19datahub.io/news/index.html}{see the changelog} for the latest news about the dataset.
@@ -65,7 +62,7 @@
 #' x <- covid19(gmr = TRUE)
 #' 
 #' # Apple Mobility Reports
-#' x <- covid19(amr = TRUE)
+#' x <- covid19(amr = "path/to/file.csv")
 #' 
 #' }
 #'
@@ -73,6 +70,8 @@
 #'
 #' @references 
 #' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, \doi{10.21105/joss.02376}.
+#' 
+#' Guidotti, E., (2022), "A worldwide epidemiological database for COVID-19 at fine-grained spatial resolution", Sci Data 9(1):112, \doi{10.1038/s41597-022-01245-1}.
 #'
 #' @note 
 #' We have invested a lot of time and effort in creating \href{https://covid19datahub.io}{COVID-19 Data Hub}, please:
@@ -102,6 +101,9 @@ covid19 <- function(country = NULL,
                     verbose = TRUE,
                     ...){
 
+  oo <- options(timeout = 0)
+  on.exit(options(oo))
+  
   if(any(!level %in% 1:3))
     stop("'level' must be one of 1, 2, 3 or a combination of those.")
 
@@ -169,8 +171,9 @@ covid19 <- function(country = NULL,
     x <- apple(x, level = level, url = amr, dir = dir, verbose = verbose)
   
   if(verbose){
-    cat("We have invested a lot of time and effort in creating COVID-19 Data Hub, please cite the following when using it:\n")
-    print(utils::citation("COVID19"))
+    print(utils::citation("COVID19"), bibtex = FALSE)
+    cat("To print citations in BibTeX format use:\n")
+    cat(" > print(citation('COVID19'), bibtex=TRUE)\n\n")
     cat("To hide this message use 'verbose = FALSE'.\n")
   }
   
